@@ -1,0 +1,12 @@
+name,embodied_carbon,lifetime_years,power_consumption,idle_power
+GPU_T4, 10.3, 8, 70, 36
+GPU_V100, 20, 8, 300, 27
+GPU_A100, 26.34, 5, 400, 35
+GPU_H100, 43.41, 5, 700, 31
+CPU_Xeon8480p, 22.90, 8, 350, 80
+CPU_EPYC7734, 4.32, 8, 360, 80
+DRAM_DDR4_32GB, 12.8, 4, 3.4, 1
+DRAM_DDR5_64GB, 24, 4, 3, 1
+SSD_Samsung_16TB, 288, 5, 25, 5
+NIC_ConnectX7, 5, 4, 25, 10
+NIC_ConnectX6, 4, 4, 25, 10
