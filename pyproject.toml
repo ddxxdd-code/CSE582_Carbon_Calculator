@@ -1,0 +1,20 @@
+[project]
+name = "CarbonCalculator"
+version = "0.1.0"
+description = "A tool to calculate the carbon footprint of a LLM."
+dependencies = [
+    "pandas",
+    "pyyaml",
+    "matplotlib",
+]
+requires-python = ">= 3.12"
+readme = "README.md"
+
+[tool.poetry]
+name = "CarbonCalculator"
+version = "0.1.0"
+readme = "README.md"
+package-mode=false
+
+[tool.poetry.dependencies]
+python = ">= 3.12"

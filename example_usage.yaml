@@ -1,13 +1,27 @@
 # Example usage: 20h 50% CPU, 10h 20% Disk, 40h 100% GPU, 2h 5% Network
-CPU_EPYC7734:
-  utilization: 50
-  hours: 20
-SSD_Samsung_16TB:
-  utilization: 20
-  hours: 10
-GPU_A100:
-  utilization: 100
-  hours: 40
-NIC_ConnectX6:
-  utilization: 5
-  hours: 2
+Nanoflow:
+  CPU_EPYC7734:
+    utilization: 50
+    hours: 20
+  SSD_Samsung_16TB:
+    utilization: 20
+    hours: 10
+  GPU_A100:
+    utilization: 50·
+    hours: 40
+  NIC_ConnectX6:
+    utilization: 5
+    hours: 40
+PASS:
+  CPU_Xeon8480p:
+    utilization: 50
+    hours: 20
+  SSD_Samsung_16TB:
+    utilization: 20
+    hours: 10
+  GPU_T4:
+    utilization: 100
+    hours: 40
+  NIC_ConnectX7:
+    utilization: 5
+    hours: 20

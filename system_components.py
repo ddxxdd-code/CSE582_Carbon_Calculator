@@ -6,6 +6,12 @@ class Component:
         self.power_consumption = power_consumption  # Watts
         self.idle_power = idle_power # Watts
 
+    def category(self):
+        """
+        Return the category of the component based on power consumption.
+        """
+        return self.name.split("_")[0]
+
     def compute_allocated_embodied(self, usage_hours, annual_usage_hours=8760):
         """
         Allocate a fraction of embodied carbon based on the proportion of lifetime usage.
