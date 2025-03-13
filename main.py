@@ -5,6 +5,7 @@ import carbon_accountant as accountant
 import data_loader as loader
 import system_components as components
 import workload_process as workload
+import visualize
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Calculate the carbon footprint of a workload.")
@@ -25,16 +26,20 @@ def main():
     # Step 2: Define a workload using a YAML file
     # Example usage: 20h 50% CPU, 10h 20% Disk, 40h 100% GPU, 2h 5% Network
     with open(args.usage, 'r') as file:
-        usage = yaml.safe_load(file)
-    procedure = workload.Workload(usage)
-    
+        usages = yaml.safe_load(file)
+    procedures = [workload.Workload(usage, name) for name, usage in usages.items()]
+
     # Step 3: Calculate carbon totals
     calculator = accountant.CarbonCalculator(components, args.electricity_carbon_density)
-    embodied_total, operational_total = calculator.calculate_totals(procedure)
     
-    # Step 4: Display the results
-    print(f"Total Allocated Embodied Carbon: {embodied_total:.2f} kg CO₂-eq")
-    print(f"Total Operational Carbon: {operational_total:.2f} kg CO₂-eq")
+    for procedure in procedures:
+        embodied_total, operational_total = calculator.calculate_totals(procedure)
+        # Step 4: Display the results
+        print(f"Carbon Footprint for {procedure.name}:")
+        print(f"  Total Allocated Embodied Carbon: {embodied_total:.2f} kg CO₂-eq")
+        print(f"  Total Operational Carbon: {operational_total:.2f} kg CO₂-eq")
+
+    visualize.component_contribution(procedures, calculator)
 
 if __name__ == "__main__":
     main()

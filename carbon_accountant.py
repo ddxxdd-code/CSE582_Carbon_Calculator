@@ -1,3 +1,8 @@
+from typing import Dict
+
+from workload_process import Workload
+from system_components import Component
+
 class CarbonCalculator:
     def __init__(self, components, electricity_carbon_density, annual_usage_hours=8760):
         """
@@ -8,6 +13,32 @@ class CarbonCalculator:
         self.components = components
         self.electricity_carbon_density = electricity_carbon_density
         self.annual_usage_hours = annual_usage_hours
+
+    def embodied_per_component(self, workload) -> Dict[Component, float]:
+        """
+        raise ValueError if component not found in database
+        """
+        return {
+            self.components[name]: self.components[name].compute_allocated_embodied(usage_hours, self.annual_usage_hours) 
+            for name, (usage_hours, _) in workload.usage.items()
+        }
+    
+    def operational_per_component(self, workload) -> Dict[Component, float]:
+        """
+        raise ValueError if component not found in database
+        """
+        return {
+            self.components[name]: self.components[name].compute_operational(usage_hours, utilization, self.electricity_carbon_density)
+            for name, (usage_hours, utilization) in workload.usage.items()
+        }
+    
+    def calculate_totals_per_component(self, workload) -> Dict[Component, float]:
+        """
+        raise ValueError if component not found in database
+        """
+        embodied = self.embodied_per_component(workload)
+        operational = self.operational_per_component(workload)
+        return {name: embodied[name] + operational[name] for name in embodied}
 
     def calculate_totals(self, workload):
         total_embodied = 0.0
