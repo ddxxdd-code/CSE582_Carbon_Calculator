@@ -7,7 +7,7 @@ Nanoflow:
     utilization: 20
     hours: 10
   GPU_A100:
-    utilization: 50·
+    utilization: 50
     hours: 40
   NIC_ConnectX6:
     utilization: 5
