@@ -14,22 +14,22 @@ class CarbonCalculator:
         self.electricity_carbon_density = electricity_carbon_density
         self.annual_usage_hours = annual_usage_hours
 
-    def embodied_per_component(self, workload) -> Dict[Component, float]:
+    def embodied_per_component(self, workload: Workload) -> Dict[Component, float]:
         """
         raise ValueError if component not found in database
         """
         return {
-            self.components[name]: self.components[name].compute_allocated_embodied(usage_hours, self.annual_usage_hours) 
-            for name, (usage_hours, _) in workload.usage.items()
+            (c:=self.components[name]): c.compute_allocated_embodied(hours, self.annual_usage_hours) 
+            for name, (hours, _) in workload.usage.items()
         }
     
-    def operational_per_component(self, workload) -> Dict[Component, float]:
+    def operational_per_component(self, workload: Workload) -> Dict[Component, float]:
         """
         raise ValueError if component not found in database
         """
         return {
-            self.components[name]: self.components[name].compute_operational(usage_hours, utilization, self.electricity_carbon_density)
-            for name, (usage_hours, utilization) in workload.usage.items()
+            (c:=self.components[name]): c.compute_operational(hours, utilization, self.electricity_carbon_density)
+            for name, (hours, utilization) in workload.usage.items()
         }
     
     def calculate_totals_per_component(self, workload) -> Dict[Component, float]:
