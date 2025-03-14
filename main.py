@@ -30,11 +30,12 @@ def network_traffic(model_size: float, data_size: float, dp: int, pp: int) -> fl
 
 
 def nic_hours(nic: str, traffic: float, dp: int, pp: int):
-    nics_num = dp * pp * NICS_PER_NODE
-    traffic_per_nic = traffic / nics_num
+    ITERS = 6
     SECONDS_PER_HOUR = 3600
     CX6_SPEED = 2.5e10 # 200 Gbps = 2.5e10 bytes/s
     CX7_SPEED = 5e10 # 400 Gbps = 5e10 bytes/s
+    nics_num = dp * pp * NICS_PER_NODE
+    traffic_per_nic = ITERS * traffic / nics_num
     if "6" in nic: # 200 Gbps
         return traffic_per_nic / CX6_SPEED / SECONDS_PER_HOUR
     elif "7" in nic:
@@ -57,15 +58,19 @@ def draw_nic_graph(components):
     parallel_plan = [(8, 16), (16, 8), (32, 4)]
     group_names = []
     group_data = []
+    nics = [CX6, CX7]
     for dp, pp in parallel_plan:
         group_name = f"dp={dp},pp={pp}"
         group_names.append(group_name)
         group_data.append([])
-        for nic in [CX6, CX7]:
+        for nic in nics:
             traffic = network_traffic(MODEL_SIZE, DATA_SIZE, dp, pp)
-            h = nic_hours(nic, traffic, dp, pp) * dp * pp * NICS_PER_NODE
-            info = {"hours": h, "utilization": 100}
-            procedure = workload.Workload({nic: info}, group_name + f"nic={nic}")
+            h = nic_hours(nic, traffic, dp, pp)
+            HOURS_21_DAYS = 24 * 21
+            u = h / HOURS_21_DAYS * 100# Assume 24 hours a day, 21 days
+            info = {"hours": NICS_PER_NODE * HOURS_21_DAYS, "utilization": u}
+            print(info)
+            procedure = workload.Workload({nic: info}, group_name + f",nic={nic}")
             calculator = accountant.CarbonCalculator(components, 0.68)
             embodied_total, operational_total = calculator.calculate_totals(procedure)
             group_data[-1].append((embodied_total, operational_total))
@@ -73,7 +78,7 @@ def draw_nic_graph(components):
             print(f"  Total Allocated Embodied Carbon: {embodied_total:.2f} kg CO₂-eq")
             print(f"  Total Operational Carbon: {operational_total:.2f} kg CO₂-eq")
 
-    visualize.embodied_and_operational_groups(group_names, group_data)
+    visualize.embodied_and_operational_groups(group_names, ["CX6", "CX7"], group_data)
 
 def main():
     args = parse_args()

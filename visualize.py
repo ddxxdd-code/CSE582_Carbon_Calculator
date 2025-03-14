@@ -7,7 +7,7 @@ import numpy as np
 from carbon_accountant import CarbonCalculator
 from workload_process import Workload
 
-colors = ["red", "blue", "green", "orange", "purple", "brown", "pink", "gray", "olive", "cyan"]
+colors = ["#FFCC99", "#9999FF", "green", "orange", "purple", "brown", "pink", "gray", "olive", "cyan"]
 
 
 
@@ -52,12 +52,17 @@ def component_contribution(
     save_fig(filename)
 
 
-def embodied_and_operational_groups(group_names: List[str], group_data: List[List[Tuple[float, float]]], filename="embodied_operational_groups.png"):
+def embodied_and_operational_groups(group_names: List[str],
+                                    subcat_labels: List[str],
+                                    group_data: List[List[Tuple[float, float]]],
+                                    title: str = "Network Carbon Footprint",
+                                    filename="embodied_operational_groups.png"):
     """
     Visualize the embodied and operational carbon footprints for different groups.
     """
     bar_width = 0.5
     gap_between_groups = 1.0
+    unified_fontsize = 15
 
     x_positions = []
 
@@ -67,7 +72,7 @@ def embodied_and_operational_groups(group_names: List[str], group_data: List[Lis
         x_positions.append(positions_for_this_group)
         current_x += 2 + gap_between_groups
 
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(10, 6.5))
 
     for group_idx, group_data in enumerate(group_data):
         positions_for_group = x_positions[group_idx]
@@ -96,12 +101,27 @@ def embodied_and_operational_groups(group_names: List[str], group_data: List[Lis
         rightmost = positions_for_group[-1]
         center = (leftmost + rightmost) / 2
         group_centers.append(center)
+    
+    subcat_labels = subcat_labels * len(group_names)
+    plt.xticks(np.concatenate(x_positions), subcat_labels, fontsize=unified_fontsize)
+    # set y tick size
+    plt.yticks(fontsize=unified_fontsize)
 
-    plt.xticks(group_centers, group_names)
-    plt.title("Embodied and Operational Carbon Footprints for Different Groups")
-    plt.xlabel("Groups")
-    plt.ylabel("Carbon Footprint (kg CO₂-eq)")
-    plt.legend()
-    save_fig(filename)
+    for center_x, label in zip(group_centers, group_names):
+        plt.text(
+            center_x,       # X coordinate
+            -4,           # Y coordinate (just below y=0, or wherever you want it)
+            label,
+            ha='center',    # center horizontally
+            va='top',       # anchor text from top
+            fontsize=unified_fontsize,
+        )
+    plt.title(title, fontsize=unified_fontsize)
+    plt.xlabel("Different training parallelism configurations", labelpad=40, fontsize=unified_fontsize)
+    plt.ylabel("Carbon Footprint (kg CO₂-eq)", fontsize=unified_fontsize)
+    plt.legend(fontsize=unified_fontsize)
+    plt.tight_layout()
+    plt.savefig(filename)
+    plt.close()
 
 
